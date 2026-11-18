@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Le donne della Costituente — Postazioni telefono e radio</title>
+<style>
+  :root{
+    --ink:#1B1F24; --paper:#F4F1E8; --muted:#5B6470; --accent:#1E4D8C;
+    --room:#1A1D21; --line:#2C3138;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:var(--room);color:#E9ECEF;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+  button{font:inherit;cursor:pointer}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 20px;border-bottom:1px solid var(--line)}
+  .brand{font-weight:700;font-size:15px;letter-spacing:.02em}
+  .brand small{display:block;font-weight:500;color:#9AA3AD;font-size:12px;letter-spacing:.04em}
+  .seg{display:flex;background:#262A30;border-radius:999px;padding:4px;gap:4px}
+  .seg a{color:#C9CED5;text-decoration:none;font-weight:600;font-size:14px;padding:10px 18px;border-radius:999px;min-height:44px;display:flex;align-items:center}
+  .seg a[aria-current="page"]{background:#E9ECEF;color:var(--ink)}
+  .tools button{background:transparent;color:#C9CED5;border:1px solid #3A4048;border-radius:999px;padding:10px 14px;min-height:44px;font-size:13px}
+  main{padding:20px;min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center}
+  .view{display:none;width:100%}
+  .view.on{display:flex}
+  .note{position:fixed;left:12px;bottom:10px;font-size:11px;color:#7D8690}
+
+  /* ---------- TELEFONO ---------- */
+  #telefono{gap:40px;align-items:center;justify-content:center;flex-wrap:wrap}
+  .phone{position:relative;width:min(72vh,88vw,580px);aspect-ratio:1;flex-shrink:0;
+    background:#111;border-radius:50%;box-shadow:0 0 0 10px #0B0B0B,0 30px 60px rgba(0,0,0,.55);touch-action:none}
+  #dial{width:100%;height:100%;display:block;user-select:none;-webkit-user-select:none}
+  .side{width:min(380px,88vw);display:flex;flex-direction:column;gap:16px}
+  .card{background:var(--paper);color:var(--ink);border-radius:14px;padding:18px 20px}
+  .lcd .lbl{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .lcd .num{font-size:56px;font-weight:800;letter-spacing:.06em;line-height:1.1;min-height:62px;font-variant-numeric:tabular-nums}
+  .lcd .msg{font-size:15px;line-height:1.45;color:#3A424C;min-height:44px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{border:1px solid #C9CED5;background:#fff;color:var(--ink);border-radius:999px;padding:10px 16px;min-height:44px;font-weight:600;font-size:14px}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.danger{background:#9E2F2A;border-color:#9E2F2A;color:#fff}
+  .elenco h3{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .elenco ul{list-style:none;margin:0;padding:0;columns:2;column-gap:18px}
+  .elenco li{font-size:14px;padding:4px 0;break-inside:avoid;display:flex;gap:8px}
+  .elenco b{display:inline-block;min-width:24px;text-align:right;font-variant-numeric:tabular-nums}
+  .keypad{display:none;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .keypad.on{display:grid}
+  .keypad button{min-height:56px;border-radius:12px;border:1px solid #C9CED5;background:#fff;font-size:22px;font-weight:700;color:var(--ink)}
+  .call{display:none}
+  .call.on{display:block}
+  .call .who{font-size:24px;font-weight:800;margin:4px 0 6px}
+  .call .formula{font-size:13px;line-height:1.5;color:#3A424C;border-top:1px solid #DDD6C6;padding-top:10px;margin-top:10px}
+  .bar{height:6px;border-radius:999px;background:#DDD6C6;overflow:hidden;margin:12px 0}
+  .bar i{display:block;height:100%;width:0;background:var(--accent)}
+  .ph{color:var(--muted);font-style:italic}
+
+  /* ---------- RADIO ---------- */
+  #radio{flex-direction:column;align-items:center;gap:18px}
+  .cabinet{width:min(620px,92vw);background:#5B3A22;border-radius:300px 300px 26px 26px / 260px 260px 26px 26px;
+    padding:34px 34px 26px;box-shadow:inset 0 0 0 6px #4A2E1A,inset 0 0 0 9px #6E4A2E,0 30px 60px rgba(0,0,0,.55);position:relative}
+  .grille{position:relative;height:min(300px,46vw);border-radius:260px 260px 10px 10px / 230px 230px 10px 10px;overflow:hidden;
+    background:#B9A27A;box-shadow:inset 0 0 0 4px #3F2716}
+  .cloth{position:absolute;inset:0;background:
+    repeating-linear-gradient(45deg,rgba(60,40,20,.18) 0 2px,transparent 2px 5px),
+    repeating-linear-gradient(-45deg,rgba(60,40,20,.14) 0 2px,transparent 2px 5px)}
+  .bars{position:absolute;inset:0;display:flex;justify-content:space-evenly}
+  .bars span{width:16px;height:100%;background:#5B3A22;box-shadow:inset 0 0 0 2px #4A2E1A}
+  .badge{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);background:#2E1D10;color:#E8D6AE;font-family:Georgia,"Times New Roman",serif;
+    font-size:15px;letter-spacing:.12em;padding:6px 16px;border-radius:4px;white-space:nowrap}
+  .scale{position:relative;margin:22px 0 10px;height:118px;border-radius:10px;background:#2A2118;overflow:hidden;
+    box-shadow:inset 0 0 0 4px #3F2716;touch-action:none;cursor:ew-resize}
+  .scale .glass{position:absolute;inset:4px;border-radius:7px;background:#E9DDBF;opacity:.22;transition:opacity 1.6s ease}
+  .radio-on .scale .glass{opacity:1}
+  .ticks{position:absolute;inset:4px 18px}
+  .tick{position:absolute;bottom:34px;width:1px;background:#4A3A28}
+  .freq{position:absolute;bottom:12px;transform:translateX(-50%);font-size:11px;color:#4A3A28;font-variant-numeric:tabular-nums}
+  .station{position:absolute;top:10px;transform:translateX(-50%);text-align:center;font-family:Georgia,"Times New Roman",serif;color:#2E1D10;line-height:1.15}
+  .station b{display:block;font-size:14px}
+  .station span{font-size:10px;color:#5C4A34}
+  .station.tuned b{color:#9E2F2A}
+  .needle{position:absolute;top:6px;bottom:6px;width:3px;margin-left:-1.5px;background:#B3261E;box-shadow:0 0 6px rgba(179,38,30,.5);left:50%}
+  .onair{background:#2E1D10;color:#E8D6AE;border-radius:8px;padding:12px 16px;font-size:14px;line-height:1.45;min-height:70px}
+  .onair .t{font-weight:700}
+  .onair .bar{background:#4A3826}
+  .onair .bar i{background:#E8B04A}
+  .controls{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-top:18px}
+  .knobwrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .knobwrap label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#E8D6AE}
+  .knob{width:92px;height:92px;border-radius:50%;border:none;background:#2B1A0E;position:relative;touch-action:none;
+    box-shadow:0 6px 0 #1E1209,inset 0 0 0 6px #3A2414,inset 0 0 0 7px #4E321C}
+  .knob::after{content:"";position:absolute;left:50%;top:10px;width:4px;height:24px;margin-left:-2px;border-radius:2px;background:#E8D6AE}
+  .knob:focus-visible{outline:3px solid #E8B04A;outline-offset:4px}
+  .eye{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .eye svg{width:70px;height:70px}
+  .power{background:#2B1A0E;color:#E8D6AE;border:1px solid #6E4A2E;border-radius:999px;padding:10px 18px;min-height:44px;font-size:13px;font-weight:600;letter-spacing:.06em}
+  .radio-on .power{background:#E8B04A;color:#2B1A0E;border-color:#E8B04A}
+  .fine{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .fine button{background:#262A30;color:#E9ECEF;border:1px solid #3A4048;border-radius:999px;min-height:44px;padding:10px 16px;font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">Le donne della Costituente<small>Prototipo delle postazioni · interfaccia senza contenuti</small></div>
+  <nav class="seg" aria-label="Postazioni">
+    <a href="#telefono" id="tab-telefono">Telefono</a>
+    <a href="#radio" id="tab-radio">Radio</a>
+  </nav>
+  <div class="tools"><button type="button" id="fs">Schermo intero</button></div>
+</header>
+
+<main>
+  <!-- ================= TELEFONO ================= -->
+  <section class="view" id="telefono" aria-label="Postazione telefono">
+    <div class="phone">
+      <svg id="dial" viewBox="-210 -210 420 420" role="img" aria-label="Disco combinatore: infila il dito in un foro e ruota in senso orario fino al fermo">
+        <circle r="203" fill="#EFE9DB" stroke="#CFC6B2" stroke-width="2"></circle>
+        <g id="digits"></g>
+        <g id="wheel"></g>
+        <g id="stop"></g>
+        <g id="center"></g>
+      </svg>
+    </div>
+
+    <div class="side">
+      <div class="card lcd" aria-live="polite">
+        <div class="lbl">Componi il numero del pannello</div>
+        <div class="num" id="numDisplay">&nbsp;</div>
+        <div class="msg" id="msg">Infila il dito in un foro e ruota il disco fino al fermo metallico, poi lascia.</div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" type="button" id="clearBtn">Cancella</button>
+          <button class="btn" type="button" id="kpBtn" aria-expanded="false">Usa la tastiera</button>
+        </div>
+      </div>
+
+      <div class="card keypad" id="keypad" aria-label="Tastiera numerica">
+        <button type="button" data-k="1">1</button><button type="button" data-k="2">2</button><button type="button" data-k="3">3</button>
+        <button type="button" data-k="4">4</button><button type="button" data-k="5">5</button><button type="button" data-k="6">6</button>
+        <button type="button" data-k="7">7</button><button type="button" data-k="8">8</button><button type="button" data-k="9">9</button>
+        <button type="button" data-k="del" aria-label="Cancella">⌫</button><button type="button" data-k="0">0</button><button type="button" data-k="ok" style="background:#1E4D8C;color:#fff;border-color:#1E4D8C;font-size:16px">Chiama</button>
+      </div>
+
+      <div class="card call" id="call" aria-live="polite">
+        <div class="lbl" id="callState" style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#5B6470">In linea</div>
+        <div class="who" id="callWho">Pannello —</div>
+        <div class="ph" id="callSub">[Nome della costituente]</div>
+        <div class="bar"><i id="callBar"></i></div>
+        <div class="ph">[Qui parte l'audio della lettura]</div>
+        <div class="formula">Lettura con voce sintetica di un brano tratto da [fonte, data]. Non è la voce di [nome della costituente].</div>
+        <div class="row" style="margin-top:12px"><button class="btn danger" type="button" id="hangBtn">Riaggancia</button></div>
+      </div>
+
+      <div class="card elenco">
+        <h3>Elenco dei numeri</h3>
+        <ul id="elenco"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RADIO ================= -->
+  <section class="view" id="radio" aria-label="Postazione radio">
+    <div class="cabinet" id="cabinet">
+      <div class="grille" aria-hidden="true">
+        <div class="cloth"></div>
+        <div class="bars"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="badge">RADIO COSTITUENTE</div>
+      </div>
+      <div class="scale" id="scale" role="slider" aria-label="Scala di sintonia" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="500" tabindex="0">
+        <div class="glass"></div>
+        <div class="ticks" id="ticks"></div>
+        <div class="needle" id="needle"></div>
+      </div>
+      <div class="onair" id="onair" aria-live="polite"><span class="t">Radio spenta.</span> Premi «Accendi».</div>
+      <div class="controls">
+        <div class="knobwrap">
+          <button class="knob" type="button" id="volKnob" aria-label="Volume: trascina in cerchio o usa le frecce"></button>
+          <label for="volKnob">Volume</label>
+        </div>
+        <div class="eye">
+          <svg viewBox="-40 -40 80 80" aria-hidden="true">
+            <circle r="36" fill="#1E1209"></circle>
+            <circle r="30" id="eyeBase" fill="#0E2A18"></circle>
+            <path id="eyeShadow" fill="#0B140E"></path>
+            <circle r="8" fill="#1E1209"></circle>
+          </svg>
+          <button class="power" type="button" id="powerBtn" aria-pressed="false">Accendi</button>
+        </div>
+        <div class="knobwrap">
+          <button class="knob" type="button" id="tuneKnob" aria-label="Sintonia: trascina in cerchio o usa le frecce"></button>
+          <label for="tuneKnob">Sintonia</label>
+        </div>
+      </div>
+    </div>
+    <div class="fine">
+      <button type="button" id="prevSt">‹ Stazione precedente</button>
+      <button type="button" id="fineL" aria-label="Sintonia fine a sinistra">‹</button>
+      <button type="button" id="fineR" aria-label="Sintonia fine a destra">›</button>
+      <button type="button" id="nextSt">Stazione successiva ›</button>
+    </div>
+  </section>
+</main>
+<div class="note">Prototipo: nomi e audio sono segnaposto. I suoni sono generati dal browser, senza rete.</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ---------- contenuti segnaposto (pannelli selezionati) ---------- */
+  var PANNELLI = [
+    {n:"2",  nome:"Introduzione"},
+    {n:"7",  nome:"[Costituente]"},
+    {n:"9",  nome:"[Costituente]"},
+    {n:"14", nome:"[Costituente]"},
+    {n:"16", nome:"[Costituente]"},
+    {n:"17", nome:"[Costituente]"},
+    {n:"21", nome:"[Costituente]"},
+    {n:"22", nome:"[Costituente]"}
+  ];
+  var byNum = {}; PANNELLI.forEach(function(p){ byNum[p.n]=p; });
+
+  /* ---------- audio (Web Audio, nessun file) ---------- */
+  var ac=null, master=null;
+  function audio(){
+    if(!ac){
+      try{
+        ac = new (window.AudioContext||window.webkitAudioContext)();
+        master = ac.createGain(); master.gain.value = 0.9; master.connect(ac.destination);
+      }catch(e){ ac=null; }
+    }
+    if(ac && ac.state==="suspended"){ try{ ac.resume(); }catch(e){} }
+    return ac;
+  }
+  var noiseBuf=null;
+  function getNoise(){
+    if(!noiseBuf && ac){
+      noiseBuf = ac.createBuffer(1, ac.sampleRate*2, ac.sampleRate);
+      var d=noiseBuf.getChannelData(0); for(var i=0;i<d.length;i++) d[i]=Math.random()*2-1;
+    }
+    return noiseBuf;
+  }
+  function click(strong){
+    if(!audio()) return;
+    var t=ac.currentTime, s=ac.createBufferSource(); s.buffer=getNoise();
+    var f=ac.createBiquadFilter(); f.type="bandpass"; f.frequency.value=strong?1200:2400; f.Q.value=1.2;
+    var g=ac.createGain(); g.gain.setValueAtTime(strong?0.9:0.45,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.025);
+    s.connect(f); f.connect(g); g.connect(master); s.start(t, Math.random()); s.stop(t+0.04);
+  }
+  function tone(freq, start, dur, vol){
+    var o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=freq; o.type="sine";
+    g.gain.setValueAtTime(0,start); g.gain.linearRampToValueAtTime(vol,start+0.02);
+    g.gain.setValueAtTime(vol,start+dur-0.03); g.gain.linearRampToValueAtTime(0,start+dur);
+    o.connect(g); g.connect(master); o.start(start); o.stop(start+dur+0.05);
+  }
+
+  /* ================= TELEFONO ================= */
+  var NS="http://www.w3.org/2000/svg";
+  var svg=document.getElementById("dial"), wheel=document.getElementById("wheel");
+  var R=148, HR=27, STOP=120;
+  var DIG=["1","2","3","4","5","6","7","8","9","0"];
+  function holeAngle(i){ return 60-30*i; }           // gradi, orari da ore 12
+  function maxRot(i){ return 60+30*i; }
+  function pos(a,r){ var t=a*Math.PI/180; return {x:r*Math.sin(t), y:-r*Math.cos(t)}; }
+  function el(tag,attrs,parent){ var e=document.createElementNS(NS,tag); for(var k in attrs) e.setAttribute(k,attrs[k]); if(parent) parent.appendChild(e); return e; }
+  function circ(cx,cy,r){ return "M"+(cx+r)+" "+cy+" A"+r+" "+r+" 0 1 0 "+(cx-r)+" "+cy+" A"+r+" "+r+" 0 1 0 "+(cx+r)+" "+cy+" Z"; }
+
+  // numeri sulla piastra fissa
+  var gd=document.getElementById("digits");
+  DIG.forEach(function(d,i){
+    var p=pos(holeAngle(i),R);
+    el("circle",{cx:p.x,cy:p.y,r:HR-3,fill:"#F8F5EE",stroke:"#D8CFBC","stroke-width":1.5},gd);
+    var t=el("text",{x:p.x,y:p.y+11,"text-anchor":"middle","font-size":32,"font-weight":700,fill:"#1B1F24","font-family":"Georgia, 'Times New Roman', serif"},gd);
+    t.textContent=d;
+  });
+  // disco forato (ruota)
+  var dpath=circ(0,0,192)+circ(0,0,92);
+  DIG.forEach(function(d,i){ var p=pos(holeAngle(i),R); dpath+=circ(p.x,p.y,HR); });
+  el("path",{d:dpath,"fill-rule":"evenodd",fill:"#16171A",stroke:"#2A2C31","stroke-width":2},wheel);
+  el("circle",{r:186,fill:"none",stroke:"rgba(255,255,255,.07)","stroke-width":3},wheel);
+  DIG.forEach(function(d,i){ var p=pos(holeAngle(i),R); el("circle",{cx:p.x,cy:p.y,r:HR+1.5,fill:"none",stroke:"#3A3D44","stroke-width":2.5},wheel); });
+  // fermo metallico
+  var gs=document.getElementById("stop");
+  var s1=pos(STOP+13,162), s2=pos(STOP+13,206);
+  el("line",{x1:s1.x,y1:s1.y,x2:s2.x,y2:s2.y,stroke:"#8A8F96","stroke-width":14,"stroke-linecap":"round"},gs);
+  el("line",{x1:s1.x,y1:s1.y,x2:s2.x,y2:s2.y,stroke:"#C9CDD2","stroke-width":8,"stroke-linecap":"round"},gs);
+  // cartellino centrale
+  var gc=document.getElementById("center");
+  el("circle",{r:88,fill:"#F7F4EC",stroke:"#BDB4A0","stroke-width":2},gc);
+  el("circle",{r:80,fill:"none",stroke:"#1E4D8C","stroke-width":1.5},gc);
+  var tl1=el("text",{y:-34,"text-anchor":"middle","font-size":11,"font-weight":700,"letter-spacing":"1.5",fill:"#5B6470"},gc); tl1.textContent="LE DONNE DELLA";
+  var tl2=el("text",{y:-20,"text-anchor":"middle","font-size":11,"font-weight":700,"letter-spacing":"1.5",fill:"#5B6470"},gc); tl2.textContent="COSTITUENTE";
+  var cnum=el("text",{y:24,"text-anchor":"middle","font-size":44,"font-weight":800,fill:"#1B1F24"},gc); cnum.textContent="—";
+  var tl3=el("text",{y:50,"text-anchor":"middle","font-size":10,fill:"#5B6470"},gc); tl3.textContent="componi il pannello";
+
+  var rot=0, drag=null, acc=0, lastA=0, reached=false, returning=false, raf=0;
+  var number="", dialTimer=0, busy=false;
+  function setRot(r){ rot=r; wheel.setAttribute("transform","rotate("+r.toFixed(2)+")"); }
+  function svgPoint(e){ var pt=svg.createSVGPoint(); pt.x=e.clientX; pt.y=e.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse()); }
+  function ang(p){ return Math.atan2(p.x,-p.y)*180/Math.PI; }
+
+  svg.addEventListener("pointerdown",function(e){
+    if(returning||busy) return;
+    audio();
+    var p=svgPoint(e);
+    for(var i=0;i<DIG.length;i++){
+      var h=pos(holeAngle(i),R);
+      if(Math.hypot(p.x-h.x,p.y-h.y)<HR+8){
+        drag=i; acc=0; lastA=ang(p); reached=false;
+        try{ svg.setPointerCapture(e.pointerId); }catch(_){}
+        e.preventDefault(); return;
+      }
+    }
+  });
+  svg.addEventListener("pointermove",function(e){
+    if(drag===null) return;
+    var a=ang(svgPoint(e)), d=a-lastA;
+    if(d>180) d-=360; if(d<-180) d+=360;
+    lastA=a;
+    var m=maxRot(drag);
+    acc=Math.max(0,Math.min(m,acc+d));
+    if(acc>=m-2 && !reached){ reached=true; click(true); }
+    setRot(acc);
+  });
+  function release(){
+    if(drag===null) return;
+    var digit = reached ? DIG[drag] : null;
+    drag=null; returning=true;
+    var last=performance.now(), pulse=Math.floor(rot/30);
+    cancelAnimationFrame(raf);
+    (function step(now){
+      var dt=(now-last)/1000; last=now;
+      var r=Math.max(0, rot-330*dt);
+      var pl=Math.floor(r/30);
+      if(digit!==null && pl<pulse){ click(false); }
+      pulse=pl; setRot(r);
+      if(r>0){ raf=requestAnimationFrame(step); }
+      else { returning=false; if(digit!==null) addDigit(digit); }
+    })(last);
+  }
+  svg.addEventListener("pointerup",release);
+  svg.addEventListener("pointercancel",release);
+
+  var numDisplay=document.getElementById("numDisplay"), msg=document.getElementById("msg");
+  function showNum(){ numDisplay.innerHTML = number ? number : "&nbsp;"; cnum.textContent = number || "—"; }
+  function addDigit(d){
+    if(busy) return;
+    if(number.length>=2) number="";
+    number+=d; showNum();
+    clearTimeout(dialTimer);
+    if(number.length===2){ msg.textContent="Sto componendo…"; dialTimer=setTimeout(function(){ call(number); },700); }
+    else { msg.textContent="Componi la seconda cifra, oppure aspetta: chiamo il pannello "+number+"."; dialTimer=setTimeout(function(){ call(number); },2200); }
+  }
+  function resetPhone(text){
+    busy=false; number=""; showNum();
+    msg.textContent = text || "Infila il dito in un foro e ruota il disco fino al fermo metallico, poi lascia.";
+    callBox.classList.remove("on");
+  }
+  document.getElementById("clearBtn").addEventListener("click",function(){ clearTimeout(dialTimer); resetPhone(); });
+
+  var callBox=document.getElementById("call"), callState=document.getElementById("callState"),
+      callWho=document.getElementById("callWho"), callSub=document.getElementById("callSub"), callBar=document.getElementById("callBar");
+  var callTimers=[], progRaf=0;
+  function clearCall(){ callTimers.forEach(clearTimeout); callTimers=[]; cancelAnimationFrame(progRaf); }
+  function call(n){
+    clearTimeout(dialTimer);
+    if(!n) return;
+    busy=true; clearCall();
+    var p=byNum[n];
+    if(!p){
+      msg.textContent="Il numero "+n+" non è attivo. Componi il numero di un pannello con il simbolo delle cuffie.";
+      if(audio()){ var t=ac.currentTime+0.05; tone(950,t,0.33,0.25); tone(1400,t+0.36,0.33,0.25); tone(1800,t+0.72,0.33,0.25); }
+      callTimers.push(setTimeout(function(){ resetPhone(); },3800));
+      return;
+    }
+    msg.textContent="Chiamata in corso…";
+    callBox.classList.add("on"); callState.textContent="Squilla…";
+    callWho.textContent="Pannello "+p.n; callSub.textContent=p.nome; callBar.style.width="0";
+    if(audio()){ var t0=ac.currentTime+0.1; tone(425,t0,1.0,0.22); tone(425,t0+2.0,1.0,0.22); }
+    callTimers.push(setTimeout(function(){
+      callState.textContent="In linea"; msg.textContent="Porta la cornetta all'orecchio.";
+      if(audio()) click(true);
+      var start=performance.now(), DUR=15000;
+      (function prog(now){
+        var k=Math.min(1,(now-start)/DUR); callBar.style.width=(k*100)+"%";
+        if(k<1) progRaf=requestAnimationFrame(prog);
+        else { callState.textContent="Fine della lettura"; callTimers.push(setTimeout(function(){ resetPhone("Componi un altro numero."); },2500)); }
+      })(start);
+    },3300));
+  }
+  document.getElementById("hangBtn").addEventListener("click",function(){ clearCall(); if(audio()) click(true); resetPhone("Hai riagganciato. Componi un altro numero."); });
+
+  // tastiera di riserva
+  var kp=document.getElementById("keypad"), kpBtn=document.getElementById("kpBtn");
+  kpBtn.addEventListener("click",function(){ var on=kp.classList.toggle("on"); kpBtn.setAttribute("aria-expanded",on?"true":"false"); kpBtn.textContent=on?"Nascondi la tastiera":"Usa la tastiera"; });
+  kp.addEventListener("click",function(e){
+    var b=e.target.closest("button"); if(!b||busy) return; audio();
+    var k=b.getAttribute("data-k");
+    if(k==="del"){ number=number.slice(0,-1); showNum(); clearTimeout(dialTimer); return; }
+    if(k==="ok"){ call(number); return; }
+    click(false);
+    if(number.length>=2) number="";
+    number+=k; showNum(); clearTimeout(dialTimer);
+    msg.textContent="Premi «Chiama».";
+  });
+  var ul=document.getElementById("elenco");
+  PANNELLI.forEach(function(p){ var li=document.createElement("li"); li.innerHTML="<b>"+p.n+"</b><span>"+p.nome+"</span>"; ul.appendChild(li); });
+
+  /* ================= RADIO ================= */
+  var STATIONS = PANNELLI.map(function(p,i){ return {p:p, v: 80 + i*120}; });   // 80…920 su 0–1000
+  var tune=500, vol=0.6, on=false;
+  var scale=document.getElementById("scale"), ticks=document.getElementById("ticks"), needle=document.getElementById("needle");
+  var cabinet=document.getElementById("cabinet"), onair=document.getElementById("onair");
+  var tuneKnob=document.getElementById("tuneKnob"), volKnob=document.getElementById("volKnob"), powerBtn=document.getElementById("powerBtn");
+  var eyeShadow=document.getElementById("eyeShadow"), eyeBase=document.getElementById("eyeBase");
+
+  for(var i=0;i<=100;i++){
+    var t=document.createElement("div"); t.className="tick";
+    t.style.left=i+"%"; t.style.height=(i%10===0?22:(i%5===0?14:8))+"px"; ticks.appendChild(t);
+  }
+  [55,60,70,80,100,120,140,160].forEach(function(f,i,arr){
+    var x=document.createElement("div"); x.className="freq"; x.style.left=(i/(arr.length-1)*100)+"%"; x.textContent=f; ticks.appendChild(x);
+  });
+  var stEls=STATIONS.map(function(s){
+    var d=document.createElement("div"); d.className="station"; d.style.left=(s.v/10)+"%";
+    d.innerHTML="<b>N. "+s.p.n+"</b><span>"+(s.p.n==="2"?"Intro":"[nome]")+"</span>"; ticks.appendChild(d); return d;
+  });
+
+  // rumore e fischio
+  var nSrc=null, nFilt=null, nGain=null, wOsc=null, wGain=null;
+  function startRadioAudio(){
+    if(!audio()||nSrc) return;
+    nSrc=ac.createBufferSource(); nSrc.buffer=getNoise(); nSrc.loop=true;
+    nFilt=ac.createBiquadFilter(); nFilt.type="bandpass"; nFilt.frequency.value=1600; nFilt.Q.value=0.6;
+    nGain=ac.createGain(); nGain.gain.value=0;
+    nSrc.connect(nFilt); nFilt.connect(nGain); nGain.connect(master); nSrc.start();
+    wOsc=ac.createOscillator(); wOsc.type="sine"; wGain=ac.createGain(); wGain.gain.value=0;
+    wOsc.connect(wGain); wGain.connect(master); wOsc.start();
+  }
+  function stopRadioAudio(){
+    if(!nSrc) return;
+    var t=ac.currentTime; nGain.gain.setTargetAtTime(0,t,0.15); wGain.gain.setTargetAtTime(0,t,0.1);
+    var a=nSrc, b=wOsc; setTimeout(function(){ try{a.stop();b.stop();}catch(e){} },600);
+    nSrc=null; wOsc=null;
+  }
+  var warm=0, warmT=0, airStart=0, airStation=null, airRaf=0;
+  function nearest(){
+    var best=null, bd=1e9; STATIONS.forEach(function(s){ var d=Math.abs(s.v-tune); if(d<bd){bd=d;best=s;} });
+    return {s:best,d:bd};
+  }
+  function eye(strength){
+    var span = on ? 100 - 88*strength : 360;           // apertura dell'ombra in gradi
+    var a1=(-span/2)*Math.PI/180, a2=(span/2)*Math.PI/180, r=30;
+    var x1=r*Math.sin(a1), y1=-r*Math.cos(a1), x2=r*Math.sin(a2), y2=-r*Math.cos(a2);
+    var large = span>180?1:0;
+    eyeShadow.setAttribute("d", span>=359 ? circ(0,0,30) : "M0 0 L"+x1+" "+y1+" A30 30 0 "+large+" 1 "+x2+" "+y2+" Z");
+    eyeBase.setAttribute("fill", on ? "#3FD17A" : "#0E2A18");
+    eyeBase.setAttribute("opacity", on ? (0.55+0.45*warm).toFixed(2) : "1");
+  }
+  function updateRadio(){
+    needle.style.left = "calc(18px + (100% - 36px) * "+(tune/1000)+")";
+    scale.setAttribute("aria-valuenow", Math.round(tune));
+    tuneKnob.style.transform="rotate("+(tune*1.08)+"deg)";
+    volKnob.style.transform="rotate("+(-135+vol*270)+"deg)";
+    var nr=nearest(), strength=Math.max(0,1-nr.d/45), tuned=nr.d<10;
+    stEls.forEach(function(e,i){ e.classList.toggle("tuned", on && tuned && STATIONS[i]===nr.s); });
+    eye(strength);
+    if(nSrc){
+      var t=ac.currentTime;
+      nFilt.frequency.setTargetAtTime(900+(tune%137)*9,t,0.05);
+      nGain.gain.setTargetAtTime(on ? vol*warm*0.32*(tuned?0.04:(1-strength*0.85)) : 0, t, 0.06);
+      wOsc.frequency.setTargetAtTime(180+nr.d*45,t,0.03);
+      wGain.gain.setTargetAtTime(on && !tuned && nr.d<45 ? vol*warm*0.035*strength : 0, t, 0.05);
+    }
+    if(!on){ onair.innerHTML='<span class="t">Radio spenta.</span> Premi «Accendi».'; airStation=null; return; }
+    if(warm<1){ onair.innerHTML='<span class="t">Le valvole si scaldano…</span>'; return; }
+    if(tuned){
+      if(airStation!==nr.s){ airStation=nr.s; airStart=performance.now(); if(audio()) click(true); }
+      onair.innerHTML='<span class="t">In onda · Pannello '+nr.s.p.n+' · '+nr.s.p.nome+'</span><div class="bar"><i id="airBar"></i></div>'+
+        '<span style="opacity:.8">[Qui parte l\'audio della lettura] · Lettura con voce sintetica di un brano tratto da [fonte]. Non è la voce di [nome].</span>';
+    } else {
+      airStation=null;
+      onair.innerHTML='<span class="t">Cerca una stazione…</span> Gira la manopola della sintonia finché l\'occhio magico si chiude.';
+    }
+  }
+  (function airLoop(){
+    var b=document.getElementById("airBar");
+    if(b && airStation){ var k=Math.min(1,(performance.now()-airStart)/20000); b.style.width=(k*100)+"%"; }
+    airRaf=requestAnimationFrame(airLoop);
+  })();
+
+  powerBtn.addEventListener("click",function(){
+    on=!on; audio();
+    powerBtn.setAttribute("aria-pressed",on?"true":"false"); powerBtn.textContent=on?"Spegni":"Accendi";
+    cabinet.classList.toggle("radio-on",on);
+    clearInterval(warmT);
+    if(on){
+      startRadioAudio(); click(true); warm=0;
+      warmT=setInterval(function(){ warm=Math.min(1,warm+0.05); updateRadio(); if(warm>=1) clearInterval(warmT); },80);
+    } else { click(true); stopRadioAudio(); warm=0; }
+    updateRadio();
+  });
+
+  function knobDrag(knob, apply){
+    var active=false, last=0;
+    function a(e){ var r=knob.getBoundingClientRect(); return Math.atan2(e.clientX-(r.left+r.width/2), -(e.clientY-(r.top+r.height/2)))*180/Math.PI; }
+    knob.addEventListener("pointerdown",function(e){ active=true; last=a(e); audio(); try{knob.setPointerCapture(e.pointerId);}catch(_){} e.preventDefault(); });
+    knob.addEventListener("pointermove",function(e){ if(!active) return; var x=a(e), d=x-last; if(d>180)d-=360; if(d<-180)d+=360; last=x; apply(d); updateRadio(); });
+    function up(){ active=false; }
+    knob.addEventListener("pointerup",up); knob.addEventListener("pointercancel",up);
+  }
+  knobDrag(tuneKnob,function(d){ tune=Math.max(0,Math.min(1000,tune+d*0.9)); });
+  knobDrag(volKnob,function(d){ vol=Math.max(0,Math.min(1,vol+d/270)); });
+  tuneKnob.addEventListener("keydown",function(e){ if(e.key==="ArrowRight"||e.key==="ArrowUp"){tune=Math.min(1000,tune+4);updateRadio();e.preventDefault();} if(e.key==="ArrowLeft"||e.key==="ArrowDown"){tune=Math.max(0,tune-4);updateRadio();e.preventDefault();} });
+  volKnob.addEventListener("keydown",function(e){ if(e.key==="ArrowRight"||e.key==="ArrowUp"){vol=Math.min(1,vol+0.05);updateRadio();e.preventDefault();} if(e.key==="ArrowLeft"||e.key==="ArrowDown"){vol=Math.max(0,vol-0.05);updateRadio();e.preventDefault();} });
+  scale.addEventListener("keydown",function(e){ if(e.key==="ArrowRight"){tune=Math.min(1000,tune+4);updateRadio();e.preventDefault();} if(e.key==="ArrowLeft"){tune=Math.max(0,tune-4);updateRadio();e.preventDefault();} });
+
+  var sDrag=false;
+  function scaleSet(e){ var r=scale.getBoundingClientRect(), x=(e.clientX-r.left-22)/(r.width-44); tune=Math.max(0,Math.min(1000,x*1000)); updateRadio(); }
+  scale.addEventListener("pointerdown",function(e){ sDrag=true; audio(); try{scale.setPointerCapture(e.pointerId);}catch(_){} scaleSet(e); });
+  scale.addEventListener("pointermove",function(e){ if(sDrag) scaleSet(e); });
+  scale.addEventListener("pointerup",function(){ sDrag=false; });
+  scale.addEventListener("pointercancel",function(){ sDrag=false; });
+
+  function glide(target){
+    var from=tune, t0=performance.now(), D=900;
+    (function g(now){ var k=Math.min(1,(now-t0)/D), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; tune=from+(target-from)*e; updateRadio(); if(k<1) requestAnimationFrame(g); })(t0);
+  }
+  document.getElementById("nextSt").addEventListener("click",function(){ audio(); var nx=STATIONS.find(function(s){return s.v>tune+5;}); glide(nx?nx.v:STATIONS[0].v); });
+  document.getElementById("prevSt").addEventListener("click",function(){ audio(); var pv=STATIONS.slice().reverse().find(function(s){return s.v<tune-5;}); glide(pv?pv.v:STATIONS[STATIONS.length-1].v); });
+  document.getElementById("fineL").addEventListener("click",function(){ tune=Math.max(0,tune-3); updateRadio(); });
+  document.getElementById("fineR").addEventListener("click",function(){ tune=Math.min(1000,tune+3); updateRadio(); });
+
+  /* ---------- navigazione e schermo intero ---------- */
+  function route(){
+    var v = location.hash==="#radio" ? "radio" : "telefono";
+    document.getElementById("telefono").classList.toggle("on", v==="telefono");
+    document.getElementById("radio").classList.toggle("on", v==="radio");
+    document.getElementById("tab-telefono").setAttribute("aria-current", v==="telefono"?"page":"false");
+    document.getElementById("tab-radio").setAttribute("aria-current", v==="radio"?"page":"false");
+    if(v!=="radio" && on){ powerBtn.click(); }
+  }
+  window.addEventListener("hashchange",route); route(); updateRadio();
+  document.getElementById("fs").addEventListener("click",function(){
+    try{ var d=document.documentElement, p = d.requestFullscreen ? d.requestFullscreen() : (d.webkitRequestFullscreen ? d.webkitRequestFullscreen() : null); if(p && p.catch) p.catch(function(){}); }catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
